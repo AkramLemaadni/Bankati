@@ -47,9 +47,41 @@ public class CreditServlet extends HttpServlet {
             creditController.saveOrUpdate(request, response);
         } else if(path.equals("/delete")) {
             creditController.delete(request, response);
+        } else if(path.equals("/update-status")) {
+            updateStatus(request, response);
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+    }
+
+    private void updateStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Check if user is admin
+        ma.bankati.model.users.User user = (ma.bankati.model.users.User) request.getSession().getAttribute("connectedUser");
+        if (user == null || user.getRole() != ma.bankati.model.users.ERole.ADMIN) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        
+        try {
+            Long id = Long.parseLong(request.getParameter("id"));
+            String statusStr = request.getParameter("status");
+            
+            if (id != null && statusStr != null && !statusStr.isEmpty()) {
+                ma.bankati.model.credit.ECredit status = ma.bankati.model.credit.ECredit.valueOf(statusStr);
+                
+                // Update the credit status
+                Credit credit = creditController.getCreditDao().findById(id);
+                if (credit != null) {
+                    credit.setStatus(status);
+                    creditController.getCreditDao().update(credit);
+                    request.setAttribute("successMessage", "Statut de la demande mise à jour avec succès!");
+                }
+            }
+        } catch (Exception e) {
+            request.setAttribute("errorMessage", "Erreur lors de la mise à jour du statut: " + e.getMessage());
+        }
+        
+        response.sendRedirect(request.getContextPath() + "/credit");
     }
 
     @Override

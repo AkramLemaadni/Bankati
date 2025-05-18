@@ -133,8 +133,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/users">
-                        <i class="bi bi-people-fill me-1"></i> Demande credit
+                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/credit">
+                        <i class="bi bi-cash-stack me-1"></i> Demande credit
                     </a>
                 </li>
             </ul>
