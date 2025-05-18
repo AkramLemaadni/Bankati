@@ -96,6 +96,20 @@
         .footer-navbar .text-muted, .footer-navbar .blue {
             color: #4fc3f7 !important;
         }
+        .alert-success {
+            background-color: rgba(67, 160, 71, 0.9) !important;
+            color: white !important;
+        }
+        .alert-danger {
+            background-color: rgba(255, 82, 82, 0.9) !important;
+            color: white !important;
+        }
+        .is-invalid {
+            border-color: #ff5252 !important;
+        }
+        .invalid-feedback {
+            color: #ff5252 !important;
+        }
     </style>
 </head>
 <body>
@@ -104,7 +118,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="<%= ctx %>/home">
-            <img src="<%= ctx %>/assets/img/logoBlue.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2">
+			<img src="<%= ctx %>/assets/img/logoBank.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2">
             <strong class="blue ml-1"><%=application.getAttribute("AppName")%></strong>
         </a>
 
@@ -142,6 +156,24 @@
         </div>
     </div>
 </nav>
+
+<!-- ALERT MESSAGES -->
+<c:if test="${not empty successMessage}">
+    <div class="container w-75 mt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> ${successMessage}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+</c:if>
+<c:if test="${not empty errorMessage}">
+    <div class="container w-75 mt-3">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> ${errorMessage}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+</c:if>
 
 <!-- MAIN CONTENT -->
 <div class="container w-75 mt-5 mb-5 p-4 rounded-3 shadow-sm border border-dark">
@@ -216,14 +248,15 @@
     <div class="border border-primary rounded-4 p-4 mt-5 mb-5 shadow-sm">
         <h5 class="text-center bold blue mb-4">Changer le mot de passe</h5>
 
-        <form action="<%= ctx %>/profile/change-password" method="post" class="mt-3">
+        <form id="passwordForm" action="<%= ctx %>/profile/change-password" method="post" class="mt-3" onsubmit="return validatePasswordForm()">
             <!-- Current Password -->
             <div class="mb-3">
                 <div class="input-group align-items-center">
                     <span class="input-group-text">
                         <i class="bi bi-lock-fill text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
                     </span>
-                    <input type="password" class="form-control" name="currentPassword" placeholder="Mot de passe actuel" required/>
+                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Mot de passe actuel" required/>
+                    <div class="invalid-feedback">Le mot de passe actuel est requis</div>
                 </div>
             </div>
 
@@ -233,7 +266,8 @@
                     <span class="input-group-text">
                         <i class="bi bi-key-fill text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
                     </span>
-                    <input type="password" class="form-control" name="newPassword" placeholder="Nouveau mot de passe" required/>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Nouveau mot de passe" required/>
+                    <div class="invalid-feedback">Le nouveau mot de passe est requis</div>
                 </div>
             </div>
 
@@ -243,7 +277,8 @@
                     <span class="input-group-text">
                         <i class="bi bi-key text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
                     </span>
-                    <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le nouveau mot de passe" required/>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirmer le nouveau mot de passe" required/>
+                    <div class="invalid-feedback">Les mots de passe ne correspondent pas</div>
                 </div>
             </div>
 
@@ -258,11 +293,76 @@
 </div>
 
 <!-- FOOTER -->
-<nav class="navbar footer-navbar fixed-bottom bg-white shadow-sm">
+<nav class="navbar footer-navbar fixed-bottom shadow-sm">
     <div class="container d-flex justify-content-between align-items-center w-100">
         <span class="text-muted small"><b class="blue"><i class="bi bi-house-door me-1"></i> Akram's Bank 2025 </b>– © Tous droits réservés</span>
     </div>
 </nav>
+
+<script>
+    // Form validation for password change
+    function validatePasswordForm() {
+        const form = document.getElementById('passwordForm');
+        const currentPassword = document.getElementById('currentPassword');
+        const newPassword = document.getElementById('newPassword');
+        const confirmPassword = document.getElementById('confirmPassword');
+        let isValid = true;
+        
+        // Reset validation state
+        currentPassword.classList.remove('is-invalid');
+        newPassword.classList.remove('is-invalid');
+        confirmPassword.classList.remove('is-invalid');
+        
+        // Validate current password
+        if (!currentPassword.value) {
+            currentPassword.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        // Validate new password
+        if (!newPassword.value) {
+            newPassword.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        // Validate password confirmation
+        if (!confirmPassword.value || confirmPassword.value !== newPassword.value) {
+            confirmPassword.classList.add('is-invalid');
+            isValid = false;
+        }
+        
+        return isValid;
+    }
+    
+    // Real-time validation
+    document.getElementById('currentPassword').addEventListener('input', function() {
+        if (this.value) {
+            this.classList.remove('is-invalid');
+        }
+    });
+    
+    document.getElementById('newPassword').addEventListener('input', function() {
+        if (this.value) {
+            this.classList.remove('is-invalid');
+        }
+        // Check confirmation field if it's already filled
+        const confirmField = document.getElementById('confirmPassword');
+        if (confirmField.value && confirmField.value !== this.value) {
+            confirmField.classList.add('is-invalid');
+        } else if (confirmField.value) {
+            confirmField.classList.remove('is-invalid');
+        }
+    });
+    
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+        const newPassword = document.getElementById('newPassword').value;
+        if (this.value && this.value === newPassword) {
+            this.classList.remove('is-invalid');
+        } else if (this.value) {
+            this.classList.add('is-invalid');
+        }
+    });
+</script>
 
 </body>
 </html>

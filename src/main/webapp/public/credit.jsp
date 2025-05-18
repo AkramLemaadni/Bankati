@@ -25,12 +25,13 @@
             background: #181a1b;
             padding: 2.5rem 2rem 2rem 2rem;
             width: 100%;
-            max-width: 700px;
+            max-width: 900px;
             margin: 2rem auto 2rem auto;
             font-family: 'Poppins', Arial, sans-serif;
         }
         .credit-form-card {
             max-width: 500px;
+            background: #212529;
         }
         .main-card h4, .credit-form-card h5 {
             color: #4fc3f7;
@@ -88,6 +89,7 @@
         }
         .table th, .table td {
             border-color: #333;
+            vertical-align: middle;
         }
         .table thead {
             background: #181a1b;
@@ -109,6 +111,27 @@
         .rounded-3, .rounded-4, .rounded-circle {
             border-radius: 2rem !important;
         }
+        .btn-group .btn {
+            margin: 0 2px;
+        }
+        .navbar-brand strong {
+            color: #4fc3f7 !important;
+        }
+        .nav-link, .dropdown-item, .navbar-brand, .navbar {
+            color: #fff !important;
+        }
+        .nav-link.text-primary, .dropdown-item.text-primary {
+            color: #4fc3f7 !important;
+        }
+        .text-danger {
+            color: #ff5252 !important;
+        }
+        .text-primary {
+            color: #4fc3f7 !important;
+        }
+        .blue {
+            color: #4fc3f7 !important;
+        }
     </style>
 </head>
 <body>
@@ -117,7 +140,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="<%= ctx %>/home">
-            <img src="<%= ctx %>/assets/img/logoBlue.png" alt="Logo" width="40" height="40" class="me-2">
+			<img src="<%= ctx %>/assets/img/logoBank.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2">
             <strong class="blue ml-1"><%=application.getAttribute("AppName")%></strong>
         </a>
         <div class="collapse navbar-collapse">
@@ -174,11 +197,11 @@
 </c:if>
 
 <!-- MAIN CONTENT -->
-<div class="container w-75 mt-5 mb-5 bg-white p-4 rounded-3 shadow-sm border border-light">
+<div class="main-card mt-5 mb-5">
     <h4 class="text-center text-primary mb-4">Mes Demandes de Crédit</h4>
 
     <!-- CREDIT FORM -->
-    <div class="border border-primary rounded-4 p-4 mb-5 shadow-sm bg-white w-75 mx-auto">
+    <div class="credit-form-card p-4 mb-5 mx-auto">
         <h5 class="text-center bold blue">
             <c:choose>
                 <c:when test="${not empty credit}">Modifier la demande</c:when>
@@ -201,11 +224,11 @@
             <div class="mb-3">
                 <label class="form-label text-primary fw-bold">Montant (DH)</label>
                 <div class="input-group align-items-center">
-                    <span class="input-group-text bg-white">
+                    <span class="input-group-text">
                         <i class="bi bi-currency-dollar text-primary"></i>
                     </span>
                     <input type="number" id="montant" name="montant"
-                           class="form-control text-dark bold"
+                           class="form-control bold"
                            placeholder="5000" value="${credit.montant}" required>
                 </div>
             </div>
@@ -213,11 +236,11 @@
             <div class="mb-3">
                 <label class="form-label text-primary fw-bold">Durée (mois)</label>
                 <div class="input-group align-items-center">
-                    <span class="input-group-text bg-white">
+                    <span class="input-group-text">
                         <i class="bi bi-hourglass-split text-primary"></i>
                     </span>
                     <input type="number" id="duree" name="duree"
-                           class="form-control text-dark bold"
+                           class="form-control bold"
                            placeholder="12" min="1" max="120" value="${credit.dureeMois}" required>
                     <div class="invalid-feedback">Durée doit être entre 1 et 120 mois</div>
                 </div>
@@ -253,15 +276,15 @@
                     <td>${demande.dateDemande}</td>
                     <td>${demande.montant} DH</td>
                     <td>${demande.dureeMois} mois</td>
-                    <td class="statut-${demande.status.toString().toLowerCase().replace(' ', '_')}">
+                    <td class="statut-${demande.status.toString().toLowerCase()}">
                             ${demande.status}
                     </td>
                     <td>
                         <div class="btn-group" role="group">
-                            <a href="<%= ctx %>/credit/edit?id=${demande.id}" class="btn btn-outline-primary btn-sm">
+                            <a href="${pageContext.request.contextPath}/credit/edit?id=${demande.id}" class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
-                            <form action="<%= ctx %>/credit/delete" method="post" style="display:inline;">
+                            <form action="${pageContext.request.contextPath}/credit/delete" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="${demande.id}">
                                 <button type="submit" class="btn btn-outline-danger btn-sm"
                                         onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette demande?')">
@@ -278,7 +301,7 @@
 </div>
 
 <!-- FOOTER -->
-<nav class="navbar footer-navbar fixed-bottom bg-white shadow-sm">
+<nav class="navbar footer-navbar fixed-bottom shadow-sm">
     <div class="container d-flex justify-content-between align-items-center w-100">
         <span class="text-muted small"><b class="blue"><i class="bi bi-house-door me-1"></i> Akram's Bank 2025 </b>– © Tous droits réservés</span>
     </div>
@@ -303,7 +326,7 @@
         }
 
         // Validate duration
-        if (!duree.value || duree.value <= 0) {
+        if (!duree.value || duree.value <= 0 || duree.value > 120) {
             duree.classList.add('is-invalid');
             isValid = false;
         }
@@ -319,7 +342,7 @@
     });
 
     document.getElementById('duree').addEventListener('input', function() {
-        if (this.value > 0) {
+        if (this.value > 0 && this.value <= 120) {
             this.classList.remove('is-invalid');
         }
     });

@@ -93,7 +93,7 @@
 	<div class="container-fluid">
 		<!-- Logo & Brand -->
 		<a class="navbar-brand d-flex align-items-center" href="<%= ctx %>/home">
-			<img src="<%= ctx %>/assets/img/logoBlue.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2">
+            <img src="<%= ctx %>/assets/img/logoBank.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2">
 			<strong class="blue ml-1"><%=application.getAttribute("AppName")%></strong>
 		</a>
 

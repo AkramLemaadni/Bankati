@@ -22,27 +22,39 @@ public class CreditController{
    public CreditController(){this.creditDao = new CreditDaoImpl();}
 
     public void showAll(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
        User connectedUser = (User) request.getSession().getAttribute("connectedUser");
        List<Credit> credits = creditDao.findByUserId(connectedUser.getId());
        request.setAttribute("demandes", credits);
-       request.getRequestDispatcher("public/credit.jsp").forward(request, response);
-
+       request.getRequestDispatcher("/public/credit.jsp").forward(request, response);
     }
 
     public void editForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       Long id = Long.parseLong(request.getParameter("id"));
-       Credit credit = creditDao.findById(id);
-       User connectedUser = (User) request.getSession().getAttribute("connectedUser");
+       try {
+           Long id = Long.parseLong(request.getParameter("id"));
+           Credit credit = creditDao.findById(id);
+           User connectedUser = (User) request.getSession().getAttribute("connectedUser");
 
-       if (credit == null || !credit.getUserId().equals(connectedUser.getId())) {
-           request.setAttribute("errorMessage", "Vous n'avez pas accès à cette demande de crédit.");
+           if (credit == null) {
+               request.setAttribute("errorMessage", "Demande de crédit non trouvée.");
+               showAll(request, response);
+               return;
+           }
+           
+           if (!credit.getUserId().equals(connectedUser.getId())) {
+               request.setAttribute("errorMessage", "Vous n'avez pas accès à cette demande de crédit.");
+               showAll(request, response);
+               return;
+           }
+           
+           request.setAttribute("credit", credit);
+           User user = (User) request.getSession().getAttribute("connectedUser");
+           List<Credit> credits = creditDao.findByUserId(user.getId());
+           request.setAttribute("demandes", credits);
+           request.getRequestDispatcher("/public/credit.jsp").forward(request, response);
+       } catch (NumberFormatException e) {
+           request.setAttribute("errorMessage", "Identifiant de demande invalide.");
            showAll(request, response);
-           return;
        }
-       
-       request.setAttribute("credit", credit);
-       showAll(request, response);
     }
 
     public void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -90,5 +102,4 @@ public class CreditController{
        }
        response.sendRedirect(request.getContextPath() + "/credit");
     }
-
 }

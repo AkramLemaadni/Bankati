@@ -1,4 +1,6 @@
 <%@ page import="ma.bankati.model.users.User" pageEncoding="UTF-8" %>
+<%@ page import="ma.bankati.model.data.MoneyData" %>
+<%@ page import="java.util.List" %>
 <html>
 <head>
 	<title>H O M E</title>
@@ -73,12 +75,41 @@
 		.navbar, .footer-navbar {
 			box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.08);
 		}
+		.balance-amount {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        .currency {
+            font-size: 1.2rem;
+            margin-left: 0.5rem;
+        }
+        .currency-card {
+            background: #242627;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .currency-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+        .text-primary {
+            color: #4fc3f7 !important;
+        }
+        .text-danger {
+            color: #ff5252 !important;
+        }
+        .blue {
+            color: #4fc3f7 !important;
+        }
 	</style>
 </head>
 <%
 	var user = (User) session.getAttribute("connectedUser");
 	var appName = (String) application.getAttribute("AppName");
 	var ctx = request.getContextPath();
+    var result = (MoneyData) request.getAttribute("result");
+    var allCurrencies = (List<MoneyData>) request.getAttribute("allCurrencies");
 %>
 <body>
 
@@ -130,9 +161,55 @@
 
 <div class="main-card">
 	<div class="card-body text-center">
-		<h1 class="mt-4 mb-3 text-danger font-weight-bold text-capitalize">
-			Page publique
-		</h1>
+		<h5 class="mt-4 mb-4 text-white">
+			Bienvenue à votre compte <span class="text-primary font-weight-bold"><%= appName %></span>
+		</h5>
+		
+		<% if(result != null) { %>
+        <div class="mb-4">
+            <p class="text-primary h5 mb-3">
+                Solde principal :
+            </p>
+            <div class="text-danger balance-amount">
+                <%= String.format("%,.2f", result.getValue()) %><span class="currency"><%= result.getDevise() %></span>
+            </div>
+            <p class="text-muted small mt-2">Dernière mise à jour: <%= result.getCreationDate() %></p>
+        </div>
+        
+        <% if (allCurrencies != null && allCurrencies.size() > 1) { %>
+            <div class="mt-4">
+                <p class="text-primary h6 mb-3">Tous vos comptes :</p>
+                
+                <div class="currency-list">
+                    <% for (MoneyData currency : allCurrencies) { %>
+                        <div class="currency-card text-start">
+                            <div class="d-flex align-items-center">
+                                <% 
+                                String icon = "bi-cash-coin";
+                                if (currency.getDevise().name().equals("Dollar")) {
+                                    icon = "bi-currency-dollar";
+                                } else if (currency.getDevise().name().equals("Euro")) {
+                                    icon = "bi-currency-euro";
+                                } else if (currency.getDevise().name().equals("Pound")) {
+                                    icon = "bi-currency-pound";
+                                }
+                                %>
+                                <i class="bi <%= icon %> currency-icon text-primary"></i>
+                                <div>
+                                    <h6 class="mb-0 text-white"><%= currency.getDevise() %></h6>
+                                    <p class="mb-0 text-white"><strong><%= String.format("%,.2f", currency.getValue()) %></strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        <% } %>
+        <% } else { %>
+            <h1 class="mt-4 mb-3 text-danger font-weight-bold text-capitalize">
+                Aucun solde disponible
+            </h1>
+        <% } %>
 	</div>
 </div>
 
@@ -140,7 +217,7 @@
 <nav class="navbar footer-navbar fixed-bottom bg-white">
 	<div class="container d-flex justify-content-between align-items-center w-100">
         <span class="text-muted small">
-            © <%= appName %> 2025 – Tous droits réservés
+            <b class="blue"><i class="bi bi-house-door me-1"></i> <%= appName %> 2025 </b>– © Tous droits réservés
         </span>
 	</div>
 </nav>
