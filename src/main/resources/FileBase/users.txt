@@ -1,3 +1,0 @@
-ID-FirstName-LastName-UserName-Password-Role-Created_At
-1-John-Doe-admin-1234-ADMIN-null
-2-Dr-Wayne-user-5678-USER-null
