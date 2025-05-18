@@ -255,7 +255,7 @@
 
         <c:if test="${not empty credit}">
             <div class="user-info">
-                <strong><i class="bi bi-person-fill"></i> Client:</strong> ${credit.userName} (ID: ${credit.userId})
+                <strong><i class="bi bi-person-fill"></i> Client:</strong> ${credit.userInfo} (ID: ${credit.userId})
             </div>
         </c:if>
 
@@ -366,7 +366,7 @@
             <tbody class="bold">
             <c:forEach items="${demandes}" var="demande">
                 <tr>
-                    <td>${demande.userName}</td>
+                    <td>${demande.userInfo}</td>
                     <td>${demande.dateDemande}</td>
                     <td>${demande.montant} DH</td>
                     <td>${demande.dureeMois} mois</td>

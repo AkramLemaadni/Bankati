@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import ma.bankati.dao.creditDao.CreditDaoImpl;
 import ma.bankati.dao.creditDao.ICreditDao;
+import ma.bankati.dao.userDao.IUserDao;
+import ma.bankati.dao.userDao.UserDaoImpl;
 import ma.bankati.model.credit.Credit;
 import ma.bankati.model.credit.ECredit;
 import ma.bankati.model.users.User;
@@ -18,8 +20,12 @@ import java.util.List;
 
 public class CreditController{
     private final ICreditDao creditDao;
+    private final IUserDao userDao;
 
-   public CreditController(){this.creditDao = new CreditDaoImpl();}
+   public CreditController(){
+       this.creditDao = new CreditDaoImpl();
+       this.userDao = new UserDaoImpl();
+   }
 
    // Getter for creditDao
    public ICreditDao getCreditDao() {
@@ -35,6 +41,17 @@ public class CreditController{
        if (connectedUser.getRole() == ma.bankati.model.users.ERole.ADMIN) {
            // For admin users, show all credits
            List<Credit> allCredits = creditDao.findAll();
+           
+           // Add user information for each credit
+           for (Credit credit : allCredits) {
+               User user = userDao.findById(credit.getUserId());
+               if (user != null) {
+                   credit.setUserInfo(user.getFirstName() + " " + user.getLastName());
+               } else {
+                   credit.setUserInfo("Utilisateur inconnu");
+               }
+           }
+           
            request.setAttribute("demandes", allCredits);
            request.getRequestDispatcher("/admin/credit.jsp").forward(request, response);
        } else {
@@ -68,7 +85,24 @@ public class CreditController{
            
            if (isAdmin) {
                // Find user information for the credit
+               User creditUser = userDao.findById(credit.getUserId());
+               if (creditUser != null) {
+                   credit.setUserInfo(creditUser.getFirstName() + " " + creditUser.getLastName());
+               } else {
+                   credit.setUserInfo("Utilisateur inconnu");
+               }
+               
+               // Get all credits for the admin view
                List<Credit> allCredits = creditDao.findAll();
+               // Add user information for each credit
+               for (Credit c : allCredits) {
+                   User u = userDao.findById(c.getUserId());
+                   if (u != null) {
+                       c.setUserInfo(u.getFirstName() + " " + u.getLastName());
+                   } else {
+                       c.setUserInfo("Utilisateur inconnu");
+                   }
+               }
                request.setAttribute("demandes", allCredits);
                request.getRequestDispatcher("/admin/credit.jsp").forward(request, response);
            } else {

@@ -19,5 +19,8 @@ public class Credit {
     private ECredit status;
     private LocalDate dateDemande;
     private Long userId;
-
+    
+    // Transient field to store user information (not persisted in database)
+    @Builder.Default
+    private transient String userInfo = "";
 }
