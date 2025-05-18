@@ -3,7 +3,7 @@ package ma.bankati.web.controllers.userController;
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.List;
 import ma.bankati.dao.userDao.IUserDao;
 import ma.bankati.dao.userDao.UserDaoImpl;
@@ -49,11 +49,16 @@ public class UserController {
                 .username(req.getParameter("username"))
                 .password(req.getParameter("password"))
                 .role(ERole.valueOf(req.getParameter("role")))
+                .creationDate(LocalDate.now())
                 .build();
 
         if (id == null) {
             userDao.save(user);
         } else {
+            User existingUser = userDao.findById(id);
+            if (existingUser != null) {
+                user.setCreationDate(existingUser.getCreationDate());
+            }
             userDao.update(user);
         }
 

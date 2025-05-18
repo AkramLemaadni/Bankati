@@ -246,7 +246,7 @@
 				</span>
 					<select name="role" class="form-select bold">
 						<option value="ADMIN" ${user.role == 'ADMIN' ? 'selected' : ''}>ADMIN</option>
-						<option value="USER"  ${user.role == 'USER'  ? 'selected' : ''}>USER</option>
+						<option value="CLIENT" ${user.role == 'CLIENT' ? 'selected' : ''}>CLIENT</option>
 					</select>
 				</div>
 			</div>

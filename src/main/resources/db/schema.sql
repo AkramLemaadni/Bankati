@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS money_data (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Insert test admin user
+/*-- Insert test admin user
 INSERT INTO users (first_name, last_name, username, password, role, creation_date)
 VALUES ('Admin', 'User', 'admin', 'admin123', 'ADMIN', CURRENT_DATE());
 
@@ -57,4 +57,4 @@ VALUES (5000.0, 'Dh', CURRENT_DATE(), 2),
 INSERT INTO credits (montant, duree_mois, status, date_demande, user_id)
 VALUES (50000.0, 24, 'EN_ATTENTE', CURRENT_DATE(), 2),
        (25000.0, 12, 'APPROUVE', DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY), 2),
-       (10000.0, 6, 'REFUSE', DATE_SUB(CURRENT_DATE(), INTERVAL 60 DAY), 2); 
+       (10000.0, 6, 'REFUSE', DATE_SUB(CURRENT_DATE(), INTERVAL 60 DAY), 2); */
