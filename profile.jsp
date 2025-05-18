@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="<%= ctx %>/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%= ctx %>/assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="<%= ctx %>/assets/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
@@ -71,7 +73,7 @@
             border-color: #2c2c2c;
             color: #fff;
         }
-        .form-control, .form-select {
+        .form-control {
             background: #232526 !important;
             border-color: #2c2c2c;
             color: #fff !important;
@@ -96,9 +98,9 @@
         }
     </style>
 </head>
-<body class="Optima bgBlue">
+<body>
 
-<!-- NAVBAR (same as your users page) -->
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="<%= ctx %>/home">
@@ -114,13 +116,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/users">
-                        <i class="bi bi-people-fill me-1"></i> Utilisateurs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/users">
-                        <i class="bi bi-people-fill me-1"></i> Demande credit
+                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/credit">
+                        <i class="bi bi-cash-stack me-1"></i> Crédit
                     </a>
                 </li>
             </ul>
@@ -147,7 +144,7 @@
 </nav>
 
 <!-- MAIN CONTENT -->
-<div class="container w-75 mt-5 mb-5 bg-white p-4 rounded-3 shadow-sm border border-light">
+<div class="container w-75 mt-5 mb-5 p-4 rounded-3 shadow-sm border border-light">
     <h4 class="text-center text-primary mb-4">Mon Profile</h4>
 
     <!-- PROFILE CARD -->
@@ -226,7 +223,7 @@
                     <span class="input-group-text">
                         <i class="bi bi-lock-fill text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
                     </span>
-                    <input type="password" class="form-control bold" name="currentPassword" placeholder="Mot de passe actuel" required/>
+                    <input type="password" class="form-control" name="currentPassword" placeholder="Mot de passe actuel" required/>
                 </div>
             </div>
 
@@ -236,7 +233,7 @@
                     <span class="input-group-text">
                         <i class="bi bi-key-fill text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
                     </span>
-                    <input type="password" class="form-control bold" name="newPassword" placeholder="Nouveau mot de passe" required/>
+                    <input type="password" class="form-control" name="newPassword" placeholder="Nouveau mot de passe" required/>
                 </div>
             </div>
 
@@ -246,7 +243,7 @@
                     <span class="input-group-text">
                         <i class="bi bi-key text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
                     </span>
-                    <input type="password" class="form-control bold" name="confirmPassword" placeholder="Confirmer le nouveau mot de passe" required/>
+                    <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le nouveau mot de passe" required/>
                 </div>
             </div>
 
@@ -260,12 +257,12 @@
     </div>
 </div>
 
-<!-- FOOTER (same as your users page) -->
+<!-- FOOTER -->
 <nav class="navbar footer-navbar fixed-bottom shadow-sm">
     <div class="container d-flex justify-content-between align-items-center w-100">
-        <span class="text-muted small"><b class="blue"><i class="bi bi-house-door me-1"></i> Akram's Bank 2025 </b>– © Tous droits réservés</span>
+        <span class="text-muted small"><b class="blue"><i class="bi bi-house-door me-1"></i> Bankati 2025 </b>– © Tous droits réservés</span>
     </div>
 </nav>
 
 </body>
-</html>
+</html> 

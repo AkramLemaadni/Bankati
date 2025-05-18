@@ -1,33 +1,32 @@
-package ma.bankati.service.moneyServices.serviceDirham;
+package ma.bankati.service.moneyServices;
 
 import lombok.Getter;
 import lombok.Setter;
 import ma.bankati.dao.dataDao.IDao;
 import ma.bankati.model.data.Devise;
 import ma.bankati.model.data.MoneyData;
-import ma.bankati.service.moneyServices.IMoneyService;
 
 import java.time.LocalDate;
 
 @Getter @Setter
-public class ServiceDh implements IMoneyService {
+public class MoneyService implements IMoneyService {
 
-   private IDao dao;
+    private IDao dao;
 
-    public ServiceDh() { }
+    public MoneyService() { }
 
-    public ServiceDh(IDao dao) {
+    public MoneyService(IDao dao) {
         this.dao = dao;
     }
 
     @Override
     public MoneyData convertData() {
         var data = dao.fetchData();
-        var result = data * 10.0;
+        // Default implementation returns the original data in Dirham
         return MoneyData.builder()
-                .value(result)
+                .value(data)
                 .devise(Devise.Dh)
                 .creationDate(LocalDate.now())
                 .build();
     }
-}
+} 

@@ -12,29 +12,95 @@
     <link rel="stylesheet" href="<%= ctx %>/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%= ctx %>/assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="<%= ctx %>/assets/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            font-family: 'Poppins', Arial, sans-serif;
+        }
         .profile-card {
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            background: #181a1b;
+            padding: 2.5rem 2rem 2rem 2rem;
+            color: #fff;
         }
         .profile-icon {
             font-size: 1.5rem;
             margin-right: 10px;
-            color: #0d6efd;
+            color: #4fc3f7;
         }
         .info-row {
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #2c2c2c;
             padding: 15px 0;
+            color: #fff;
         }
         .info-row:last-child {
             border-bottom: none;
         }
+        .navbar, .footer-navbar {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: #181a1b !important;
+        }
+        .navbar-brand strong {
+            color: #4fc3f7 !important;
+            font-family: 'Poppins', Arial, sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .nav-link, .dropdown-item, .navbar-brand, .navbar {
+            color: #fff !important;
+        }
+        .nav-link.text-primary, .dropdown-item.text-primary {
+            color: #4fc3f7 !important;
+        }
+        .nav-link.text-danger, .dropdown-item.text-danger {
+            color: #ff5252 !important;
+        }
+        .nav-link.text-success, .dropdown-toggle.text-success {
+            color: #43a047 !important;
+        }
+        .container {
+            background: #181a1b !important;
+            color: #fff;
+        }
+        .input-group-text {
+            background: #232526 !important;
+            border-color: #2c2c2c;
+            color: #fff;
+        }
+        .form-control {
+            background: #232526 !important;
+            border-color: #2c2c2c;
+            color: #fff !important;
+        }
+        .form-control::placeholder {
+            color: #666;
+        }
+        .badge.bg-primary {
+            background-color: #4fc3f7 !important;
+        }
+        .badge.bg-success {
+            background-color: #43a047 !important;
+        }
+        .blue {
+            color: #4fc3f7 !important;
+        }
+        .footer-navbar {
+            background: #181a1b !important;
+        }
+        .footer-navbar .text-muted, .footer-navbar .blue {
+            color: #4fc3f7 !important;
+        }
     </style>
 </head>
-<body class="Optima bgBlue">
+<body>
 
-<!-- NAVBAR (same as your users page) -->
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center" href="<%= ctx %>/home">
@@ -78,11 +144,11 @@
 </nav>
 
 <!-- MAIN CONTENT -->
-<div class="container w-75 mt-5 mb-5 bg-white p-4 rounded-3 shadow-sm border border-light">
+<div class="container w-75 mt-5 mb-5 p-4 rounded-3 shadow-sm border border-dark">
     <h4 class="text-center text-primary mb-4">Mon Profile</h4>
 
     <!-- PROFILE CARD -->
-    <div class="profile-card bg-white p-4 mb-5">
+    <div class="profile-card bg-dark p-4 mb-5">
         <!-- Profile Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -147,37 +213,37 @@
     </div>
 
     <!-- PASSWORD CHANGE SECTION -->
-    <div class="border border-primary rounded-4 p-4 mt-5 mb-5 shadow-sm bg-white">
+    <div class="border border-primary rounded-4 p-4 mt-5 mb-5 shadow-sm">
         <h5 class="text-center bold blue mb-4">Changer le mot de passe</h5>
 
         <form action="<%= ctx %>/profile/change-password" method="post" class="mt-3">
             <!-- Current Password -->
             <div class="mb-3">
                 <div class="input-group align-items-center">
-                    <span class="input-group-text bg-white">
+                    <span class="input-group-text">
                         <i class="bi bi-lock-fill text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
                     </span>
-                    <input type="password" class="form-control text-dark bold" name="currentPassword" placeholder="Mot de passe actuel" required/>
+                    <input type="password" class="form-control" name="currentPassword" placeholder="Mot de passe actuel" required/>
                 </div>
             </div>
 
             <!-- New Password -->
             <div class="mb-3">
                 <div class="input-group align-items-center">
-                    <span class="input-group-text bg-white">
+                    <span class="input-group-text">
                         <i class="bi bi-key-fill text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
                     </span>
-                    <input type="password" class="form-control text-dark bold" name="newPassword" placeholder="Nouveau mot de passe" required/>
+                    <input type="password" class="form-control" name="newPassword" placeholder="Nouveau mot de passe" required/>
                 </div>
             </div>
 
             <!-- Confirm New Password -->
             <div class="mb-4">
                 <div class="input-group align-items-center">
-                    <span class="input-group-text bg-white">
+                    <span class="input-group-text">
                         <i class="bi bi-key text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
                     </span>
-                    <input type="password" class="form-control text-dark bold" name="confirmPassword" placeholder="Confirmer le nouveau mot de passe" required/>
+                    <input type="password" class="form-control" name="confirmPassword" placeholder="Confirmer le nouveau mot de passe" required/>
                 </div>
             </div>
 
@@ -191,10 +257,10 @@
     </div>
 </div>
 
-<!-- FOOTER (same as your users page) -->
+<!-- FOOTER -->
 <nav class="navbar footer-navbar fixed-bottom bg-white shadow-sm">
     <div class="container d-flex justify-content-between align-items-center w-100">
-        <span class="text-muted small"><b class="blue"><i class="bi bi-house-door me-1"></i> Bankati 2025 </b>– © Tous droits réservés</span>
+        <span class="text-muted small"><b class="blue"><i class="bi bi-house-door me-1"></i> Akram's Bank 2025 </b>– © Tous droits réservés</span>
     </div>
 </nav>
 

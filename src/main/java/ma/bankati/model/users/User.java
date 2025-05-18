@@ -1,12 +1,16 @@
 package ma.bankati.model.users;
 
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data  @AllArgsConstructor @NoArgsConstructor @Builder
+import lombok.*;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Getter
+@Setter
+@ToString
 public class User {
 
     private Long id;
@@ -16,13 +20,4 @@ public class User {
     private String password;
     private ERole  role;
     private LocalDate creationDate = LocalDate.now();
-
-
-    public String toString(){
-        return "[" + role.toString()+ "] " + firstName + " " + lastName;
-    }
-    public String getUserInfos(){
-        return "[ login : " + username + ", password : " + password + "]";
-    }
-
 }

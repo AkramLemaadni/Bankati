@@ -10,16 +10,108 @@
     <link rel="stylesheet" href="<%= ctx %>/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%= ctx %>/assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="<%= ctx %>/assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            font-family: 'Poppins', Arial, sans-serif;
+        }
+        .main-card, .credit-form-card {
+            border: none;
+            border-radius: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            background: #181a1b;
+            padding: 2.5rem 2rem 2rem 2rem;
+            width: 100%;
+            max-width: 700px;
+            margin: 2rem auto 2rem auto;
+            font-family: 'Poppins', Arial, sans-serif;
+        }
+        .credit-form-card {
+            max-width: 500px;
+        }
+        .main-card h4, .credit-form-card h5 {
+            color: #4fc3f7;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .form-control, .input-group-text, .form-select {
+            background: #232526;
+            color: #fff;
+            border: 1px solid #333;
+            font-family: 'Poppins', Arial, sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #4fc3f7;
+            box-shadow: 0 0 0 0.2rem rgba(79,195,247,.15);
+            background: #232526;
+            color: #fff;
+        }
+        .input-group-text {
+            border-right: none;
+            background: #232526;
+        }
+        .form-control::placeholder {
+            color: #b0b3b8;
+        }
+        .btn-success, .btn-outline-success {
+            background: #007bff;
+            border: none;
+            color: #fff;
+        }
+        .btn-success:hover, .btn-outline-success:hover {
+            background: #0056b3;
+        }
+        .btn-outline-danger {
+            border-color: #ff5252;
+            color: #ff5252;
+        }
+        .btn-outline-danger:hover {
+            background: #ff5252;
+            color: #fff;
+        }
+        .btn-outline-primary {
+            border-color: #4fc3f7;
+            color: #4fc3f7;
+        }
+        .btn-outline-primary:hover {
+            background: #4fc3f7;
+            color: #fff;
+        }
+        .table {
+            background: #232526;
+            color: #fff;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .table th, .table td {
+            border-color: #333;
+        }
+        .table thead {
+            background: #181a1b;
+            color: #4fc3f7;
+        }
         .statut-en_attente { color: orange; font-weight: bold; }
-        .statut-approuve { color: green; font-weight: bold; }
-        .statut-refuse { color: red; font-weight: bold; }
-        .is-invalid { border-color: #dc3545; }
-        .invalid-feedback { color: #dc3545; font-size: 0.875em; }
+        .statut-approuve { color: #43a047; font-weight: bold; }
+        .statut-refuse { color: #ff5252; font-weight: bold; }
+        .footer-navbar {
+            background: #181a1b !important;
+            font-family: 'Poppins', Arial, sans-serif;
+        }
+        .footer-navbar .text-muted, .footer-navbar .blue {
+            color: #4fc3f7 !important;
+        }
+        .bg-white {
+            background: #232526 !important;
+        }
+        .rounded-3, .rounded-4, .rounded-circle {
+            border-radius: 2rem !important;
+        }
     </style>
 </head>
-<body class="Optima bgBlue">
+<body>
 
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
@@ -87,9 +179,24 @@
 
     <!-- CREDIT FORM -->
     <div class="border border-primary rounded-4 p-4 mb-5 shadow-sm bg-white w-75 mx-auto">
-        <h5 class="text-center bold blue">Nouvelle Demande</h5>
-        <form id="creditForm" action="${ctx}/credit/save" method="post" class="mt-3" onsubmit="return validateCreditForm()">
-            <input type="hidden" name="action" value="ajouter">
+        <h5 class="text-center bold blue">
+            <c:choose>
+                <c:when test="${not empty credit}">Modifier la demande</c:when>
+                <c:otherwise>Nouvelle Demande</c:otherwise>
+            </c:choose>
+        </h5>
+
+        <!-- Bouton visible uniquement si on est en modification -->
+        <c:if test="${not empty credit}">
+            <div class="text-center mb-3">
+                <a href="<%= ctx %>/credit" class="btn btn-outline-primary btn-sm fw-bold">
+                    <i class="bi bi-plus-circle me-1"></i> Nouvelle demande
+                </a>
+            </div>
+        </c:if>
+
+        <form id="creditForm" action="<%= ctx %>/credit/save" method="post" class="mt-3" onsubmit="return validateCreditForm()">
+            <input type="hidden" name="id" value="${credit.id}"/>
 
             <div class="mb-3">
                 <label class="form-label text-primary fw-bold">Montant (DH)</label>
@@ -99,7 +206,7 @@
                     </span>
                     <input type="number" id="montant" name="montant"
                            class="form-control text-dark bold"
-                           placeholder="5000" required>
+                           placeholder="5000" value="${credit.montant}" required>
                 </div>
             </div>
 
@@ -111,14 +218,18 @@
                     </span>
                     <input type="number" id="duree" name="duree"
                            class="form-control text-dark bold"
-                           placeholder="12" min="1" max="120" required>
+                           placeholder="12" min="1" max="120" value="${credit.dureeMois}" required>
                     <div class="invalid-feedback">Durée doit être entre 1 et 120 mois</div>
                 </div>
             </div>
 
             <div class="text-center mt-4">
                 <button type="submit" class="btn btn-success fw-bold px-4">
-                    <i class="bi bi-save me-1"></i> Soumettre
+                    <i class="bi bi-save me-1"></i> 
+                    <c:choose>
+                        <c:when test="${not empty credit}">Mettre à jour</c:when>
+                        <c:otherwise>Soumettre</c:otherwise>
+                    </c:choose>
                 </button>
             </div>
         </form>
@@ -142,15 +253,15 @@
                     <td>${demande.dateDemande}</td>
                     <td>${demande.montant} DH</td>
                     <td>${demande.dureeMois} mois</td>
-                    <td class="statut-${demande.statut.toString().toLowerCase().replace(' ', '_')}">
-                            ${demande.statut}
+                    <td class="statut-${demande.status.toString().toLowerCase().replace(' ', '_')}">
+                            ${demande.status}
                     </td>
                     <td>
                         <div class="btn-group" role="group">
-                            <a href="${ctx}/credit/edit?id=${demande.id}" class="btn btn-outline-primary btn-sm">
+                            <a href="<%= ctx %>/credit/edit?id=${demande.id}" class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-pencil-fill"></i>
                             </a>
-                            <form action="${ctx}/credit/delete" method="post" style="display:inline;">
+                            <form action="<%= ctx %>/credit/delete" method="post" style="display:inline;">
                                 <input type="hidden" name="id" value="${demande.id}">
                                 <button type="submit" class="btn btn-outline-danger btn-sm"
                                         onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette demande?')">
@@ -169,7 +280,7 @@
 <!-- FOOTER -->
 <nav class="navbar footer-navbar fixed-bottom bg-white shadow-sm">
     <div class="container d-flex justify-content-between align-items-center w-100">
-        <span class="text-muted small"><b class="blue"><i class="bi bi-house-door me-1"></i> Bankati 2025 </b>– © Tous droits réservés</span>
+        <span class="text-muted small"><b class="blue"><i class="bi bi-house-door me-1"></i> Akram's Bank 2025 </b>– © Tous droits réservés</span>
     </div>
 </nav>
 

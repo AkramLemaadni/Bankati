@@ -22,20 +22,39 @@ public class CreditController{
    public CreditController(){this.creditDao = new CreditDaoImpl();}
 
     public void showAll(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-       List<Credit> credits = creditDao.findAll();
+
+       User connectedUser = (User) request.getSession().getAttribute("connectedUser");
+       List<Credit> credits = creditDao.findByUserId(connectedUser.getId());
        request.setAttribute("demandes", credits);
        request.getRequestDispatcher("public/credit.jsp").forward(request, response);
+
     }
 
     public void editForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
        Long id = Long.parseLong(request.getParameter("id"));
        Credit credit = creditDao.findById(id);
+       User connectedUser = (User) request.getSession().getAttribute("connectedUser");
+
+       if (credit == null || !credit.getUserId().equals(connectedUser.getId())) {
+           request.setAttribute("errorMessage", "Vous n'avez pas accès à cette demande de crédit.");
+           showAll(request, response);
+           return;
+       }
+       
        request.setAttribute("credit", credit);
        showAll(request, response);
     }
 
-    public void delete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         Long id = Long.parseLong(request.getParameter("id"));
+        Credit credit = creditDao.findById(id);
+        User connectedUser = (User) request.getSession().getAttribute("connectedUser");
+        if (credit == null || !credit.getUserId().equals(connectedUser.getId())) {
+            request.setAttribute("errorMessage", "Vous n'avez pas accès à cette demande de crédit.");
+            showAll(request, response);
+            return;
+        }
+        
         creditDao.deleteById(id);
         response.sendRedirect(request.getContextPath() + "/credit");
     }
@@ -43,15 +62,21 @@ public class CreditController{
     public void saveOrUpdate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
        String idStr = request.getParameter("id");
        Long id = (idStr == null || idStr.isEmpty()) ? null : Long.parseLong(idStr);
-
-       // Get the current user from session
        User connectedUser = (User) request.getSession().getAttribute("connectedUser");
+       if (id != null) {
+           Credit existingCredit = creditDao.findById(id);
+           if (existingCredit == null || !existingCredit.getUserId().equals(connectedUser.getId())) {
+               request.setAttribute("errorMessage", "Vous n'avez pas accès à cette demande de crédit.");
+               showAll(request, response);
+               return;
+           }
+       }
 
        Credit credit = Credit.builder()
                .id(id)
                .montant(Double.parseDouble(request.getParameter("montant")))
                .dureeMois(Integer.parseInt(request.getParameter("duree")))
-               .status(ECredit.EN_ATTENTE) // Set initial status as EN_ATTENTE
+               .status(ECredit.EN_ATTENTE)
                .dateDemande(LocalDate.now())
                .userId(connectedUser.getId())
                .build();
@@ -63,8 +88,6 @@ public class CreditController{
            creditDao.update(credit);
            request.setAttribute("successMessage", "Demande de crédit mise à jour avec succès!");
        }
-
-       // Redirect to the credit list page
        response.sendRedirect(request.getContextPath() + "/credit");
     }
 

@@ -12,6 +12,7 @@ import ma.bankati.dao.userDao.IUserDao;
 import ma.bankati.service.authentification.IAuthentificationService;
 import ma.bankati.service.creditService.ICreditService;
 import ma.bankati.service.moneyServices.IMoneyService;
+import ma.bankati.util.DatabaseInitializer;
 
 @WebListener
 public class WebContext implements ServletContextListener {
@@ -23,6 +24,10 @@ public class WebContext implements ServletContextListener {
             Properties properties = new Properties();
             try {
                 properties.load(configFile);
+                
+                // Print database connection information (for debug)
+                System.out.println("Database URL: " + properties.getProperty("datasource.url"));
+                System.out.println("Database Driver: " + properties.getProperty("datasource.driver"));
 
                 // Charger les dependances
                 String dataDaoClassName = properties.getProperty("dataDao");
@@ -75,6 +80,21 @@ public class WebContext implements ServletContextListener {
     public void contextInitialized(ServletContextEvent ev) {
         var application = ev.getServletContext();
         application.setAttribute("AppName", "Akram's Bank");
+        
+        // Make sure database connection is established before loading application context
+        try {
+            // This will initialize the singleton
+            SessionFactory.getInstance();
+            System.out.println("Database connection established for the application");
+            
+            // Initialize database schema
+            DatabaseInitializer.initializeDatabase();
+        } catch (Exception e) {
+            System.err.println("Failed to initialize database connection: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Database initialization failed", e);
+        }
+        
         loadApplicationContext(application);
         System.out.println("Application Started and context initialized");
     }

@@ -24,7 +24,7 @@ public class HomeViewPathFilter implements Filter {
                 case ADMIN:
                     viewPath = "admin/home.jsp";
                     break;
-                case USER:
+                case CLIENT:
                     viewPath = "public/home.jsp";
                     break;
                 default:

@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import ma.bankati.model.users.User;
 import ma.bankati.service.authentification.IAuthentificationService;
 
@@ -25,11 +26,14 @@ public class LoginController extends HttpServlet {
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
             throws ServletException, IOException {
-
-
+        // Clear any existing session when accessing login page
+        HttpSession existingSession = request.getSession(false);
+        if (existingSession != null) {
+            existingSession.invalidate();
+        }
+        
         request.getRequestDispatcher("public/Login.jsp").forward(request, response);
     }
-
 
     @Override
     protected void doPost(HttpServletRequest request,
@@ -39,6 +43,7 @@ public class LoginController extends HttpServlet {
         String username = request.getParameter("lg");
         String password = request.getParameter("pss");
 
+        // Form validation
         if (!authService.validateLoginForm(username, password)) {
             authService.getFieldErrors().forEach(request::setAttribute);
             request.setAttribute("globalMessage", authService.getGlobalMessage());
@@ -46,18 +51,26 @@ public class LoginController extends HttpServlet {
             return;
         }
 
+        // Authentication attempt
         User user = authService.connect(username, password);
 
         if (user != null) {
-            request.getSession().setAttribute("connectedUser", user);
-            request.getSession().setAttribute("globalMessage", authService.getGlobalMessage());
+            // Create a new session and add the user
+            HttpSession oldSession = request.getSession(false);
+            if (oldSession != null) {
+                oldSession.invalidate(); // Invalidate any existing session
+            }
+            
+            HttpSession newSession = request.getSession(true);
+            newSession.setAttribute("connectedUser", user);
+            newSession.setAttribute("globalMessage", authService.getGlobalMessage());
+            
+            System.out.println("User authenticated: " + user.getUsername() + " with role " + user.getRole());
             response.sendRedirect("home");
         } else {
-            //authService.getFieldErrors().forEach(request::setAttribute);
             request.setAttribute("globalMessage", authService.getGlobalMessage());
             request.getRequestDispatcher("public/Login.jsp").forward(request, response);
         }
-
     }
 
     @Override
