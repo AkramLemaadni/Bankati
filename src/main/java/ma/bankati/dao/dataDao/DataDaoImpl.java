@@ -27,7 +27,7 @@ public class DataDaoImpl implements IDao {
 
     @Override
     public MoneyData save(MoneyData moneyData) {
-        String sql = "INSERT INTO money_data (value, devise, creation_date) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO money_data (value, devise, creation_date, user_id) VALUES (?, ?, ?, ?)";
         
         try (Connection connection = SessionFactory.getInstance().openSession();
              PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -35,6 +35,7 @@ public class DataDaoImpl implements IDao {
             ps.setDouble(1, moneyData.getValue());
             ps.setString(2, moneyData.getDevise().name());
             ps.setDate(3, Date.valueOf(moneyData.getCreationDate()));
+            ps.setLong(4, moneyData.getUserId());
             
             int affectedRows = ps.executeUpdate();
             
@@ -120,15 +121,38 @@ public class DataDaoImpl implements IDao {
     }
 
     @Override
+    public List<MoneyData> findByUserId(Long userId) {
+        String sql = "SELECT * FROM money_data WHERE user_id = ?";
+        List<MoneyData> moneyDataList = new ArrayList<>();
+        
+        try (Connection connection = SessionFactory.getInstance().openSession();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            
+            ps.setLong(1, userId);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    moneyDataList.add(mapRowToMoneyData(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return moneyDataList;
+    }
+
+    @Override
     public MoneyData update(MoneyData moneyData) {
-        String sql = "UPDATE money_data SET value = ?, devise = ? WHERE id = ?";
+        String sql = "UPDATE money_data SET value = ?, devise = ?, user_id = ? WHERE id = ?";
         
         try (Connection connection = SessionFactory.getInstance().openSession();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             
             ps.setDouble(1, moneyData.getValue());
             ps.setString(2, moneyData.getDevise().name());
-            ps.setLong(3, moneyData.getId());
+            ps.setLong(3, moneyData.getUserId());
+            ps.setLong(4, moneyData.getId());
             
             int affectedRows = ps.executeUpdate();
             
@@ -194,6 +218,7 @@ public class DataDaoImpl implements IDao {
                 .value(rs.getDouble("value"))
                 .devise(Devise.valueOf(rs.getString("devise")))
                 .creationDate(rs.getDate("creation_date").toLocalDate())
+                .userId(rs.getLong("user_id"))
                 .build();
     }
 } 

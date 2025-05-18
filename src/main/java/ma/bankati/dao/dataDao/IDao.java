@@ -38,6 +38,13 @@ public interface IDao {
     List<MoneyData> findByDevise(Devise devise);
     
     /**
+     * Find money data by user ID
+     * @param userId The user ID
+     * @return List of money data belonging to the specified user
+     */
+    List<MoneyData> findByUserId(Long userId);
+    
+    /**
      * Update existing money data
      * @param moneyData The money data to update
      * @return The updated money data

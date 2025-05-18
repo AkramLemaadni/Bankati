@@ -16,4 +16,5 @@ public class MoneyData {
     private Double value;
     private Devise devise;
     private LocalDate creationDate;
+    private Long userId;
 }

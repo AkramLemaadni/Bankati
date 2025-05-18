@@ -1,5 +1,6 @@
 <%@page import="ma.bankati.model.data.MoneyData" pageEncoding="UTF-8" %>
 <%@page import="ma.bankati.model.users.User" %>
+<%@page import="java.util.List" %>
 <%
     var ctx = request.getContextPath();
 %>
@@ -66,11 +67,30 @@
         .text-primary {
             color: #4fc3f7 !important;
         }
+        .balance-amount {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        .currency {
+            font-size: 1.2rem;
+            margin-left: 0.5rem;
+        }
+        .currency-card {
+            background: #242627;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .currency-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 <%
-    var result  = (MoneyData) request.getAttribute("result");
-    var connectedUser    = (User) session.getAttribute("connectedUser");
+    var result = (MoneyData) request.getAttribute("result");
+    var allCurrencies = (List<MoneyData>) request.getAttribute("allCurrencies");
+    var connectedUser = (User) session.getAttribute("connectedUser");
     var appName = (String) application.getAttribute("AppName");
 %>
 <body class="Optima bgBlue">
@@ -132,16 +152,49 @@
 <!-- ✅ CONTENU PRINCIPAL -->
 <div class="container-main-dark main-card mt-5 mb-5">
     <div class="card-body text-center">
-        <h5 class="mt-4 mb-3">
+        <h5 class="mt-4 mb-4">
             Bienvenue à votre compte <span class="text-primary font-weight-bold"><%= appName %></span>
         </h5>
         
-        <ul class="list-unstyled">
-            <li class="text-primary h5">
-                Solde de votre compte :
-                <span class="text-danger font-weight-bold"> <%= result %></span>
-            </li>
-        </ul>
+        <div class="mb-4">
+            <p class="text-primary h5 mb-3">
+                Solde principal :
+            </p>
+            <div class="text-danger balance-amount">
+                <%= String.format("%,.2f", result.getValue()) %><span class="currency"><%= result.getDevise() %></span>
+            </div>
+            <p class="text-muted small mt-2">Dernière mise à jour: <%= result.getCreationDate() %></p>
+        </div>
+        
+        <% if (allCurrencies != null && allCurrencies.size() > 1) { %>
+            <div class="mt-4">
+                <p class="text-primary h6 mb-3">Tous vos comptes :</p>
+                
+                <div class="currency-list">
+                    <% for (MoneyData currency : allCurrencies) { %>
+                        <div class="currency-card text-start">
+                            <div class="d-flex align-items-center">
+                                <% 
+                                String icon = "bi-cash-coin";
+                                if (currency.getDevise().name().equals("Dollar")) {
+                                    icon = "bi-currency-dollar";
+                                } else if (currency.getDevise().name().equals("Euro")) {
+                                    icon = "bi-currency-euro";
+                                } else if (currency.getDevise().name().equals("Pound")) {
+                                    icon = "bi-currency-pound";
+                                }
+                                %>
+                                <i class="bi <%= icon %> currency-icon text-primary"></i>
+                                <div>
+                                    <h6 class="mb-0"><%= currency.getDevise() %></h6>
+                                    <p class="mb-0"><strong><%= String.format("%,.2f", currency.getValue()) %></strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        <% } %>
     </div>
 </div>
 
