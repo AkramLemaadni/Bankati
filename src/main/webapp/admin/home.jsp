@@ -3,80 +3,64 @@
 <%@page import="java.util.List" %>
 <%
     var ctx = request.getContextPath();
+    var result = (MoneyData) request.getAttribute("result");
+    var allCurrencies = (List<MoneyData>) request.getAttribute("allCurrencies");
+    var connectedUser = (User) session.getAttribute("connectedUser");
+    var appName = (String) application.getAttribute("AppName");
 %>
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <title>Accueil</title>
+    <meta charset="UTF-8">
+    <title>Accueil - <%= appName %></title>
     <link rel="stylesheet" href="<%= ctx %>/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%= ctx %>/assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="<%= ctx %>/assets/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
             min-height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #232526 0%, #414345 100%);
-            font-family: 'Poppins', Arial, sans-serif;
-        }
-        .main-card, .container-main-dark {
-            border: none;
-            border-radius: 2rem;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-            background: #181a1b;
-            padding: 2.5rem 2rem 2rem 2rem;
-            width: 100%;
-            max-width: 500px;
-            margin: 4rem auto 3rem auto;
             color: #fff;
-            font-family: 'Poppins', Arial, sans-serif;
         }
-        .navbar, .footer-navbar {
-            font-family: 'Poppins', Arial, sans-serif;
-            background: #181a1b !important;
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #181a1b;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 2rem 1rem;
         }
-        .navbar-brand strong {
+        .sidebar .nav-link {
+            color: #fff;
+            margin: 0.5rem 0;
+            font-weight: 500;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #242627;
+            border-radius: 0.5rem;
             color: #4fc3f7 !important;
-            font-family: 'Poppins', Arial, sans-serif;
+        }
+        .sidebar .logo {
+            font-size: 1.5rem;
             font-weight: 600;
-            letter-spacing: 1px;
+            color: #4fc3f7;
         }
-        .nav-link, .dropdown-item, .navbar-brand, .navbar {
-            color: #fff !important;
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
         }
-        .nav-link.text-primary, .dropdown-item.text-primary {
-            color: #4fc3f7 !important;
-        }
-        .nav-link.text-danger, .dropdown-item.text-danger {
-            color: #ff5252 !important;
-        }
-        .nav-link.text-success, .dropdown-toggle.text-success {
-            color: #43a047 !important;
-        }
-        .footer-navbar {
-            background: #181a1b !important;
-        }
-        .footer-navbar .text-muted, .footer-navbar .blue {
-            color: #4fc3f7 !important;
-        }
-        .blue {
-            color: #4fc3f7 !important;
-        }
-        .text-danger {
-            color: #ff5252 !important;
-        }
-        .text-primary {
-            color: #4fc3f7 !important;
-        }
-        .balance-amount {
-            font-size: 2rem;
-            font-weight: 600;
-        }
-        .currency {
-            font-size: 1.2rem;
-            margin-left: 0.5rem;
+        .main-card {
+            background: #181a1b;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         .currency-card {
-            background: #242627;
+            background-color: #242627;
             border-radius: 1rem;
             padding: 1rem;
             margin-bottom: 1rem;
@@ -85,125 +69,104 @@
             font-size: 1.5rem;
             margin-right: 0.5rem;
         }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            background-color: #181a1b;
+            text-align: center;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .admin-badge {
+            background-color: #4fc3f7;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            margin-left: 0.5rem;
+            font-weight: bold;
+            letter-spacing: 0.05rem;
+        }
     </style>
 </head>
-<%
-    var result = (MoneyData) request.getAttribute("result");
-    var allCurrencies = (List<MoneyData>) request.getAttribute("allCurrencies");
-    var connectedUser = (User) session.getAttribute("connectedUser");
-    var appName = (String) application.getAttribute("AppName");
-%>
-<body class="Optima bgBlue">
+<body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-    <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="<%= ctx %>/home">
-            <img src="<%= ctx %>/assets/img/logoBank.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2">
-            <strong class="blue ml-1"><%=application.getAttribute("AppName")%></strong>
-        </a>
-        
-        <!-- Menu de navigation -->
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/home">
-                        <i class="bi bi-house-door me-1"></i> Accueil
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/users">
-                        <i class="bi bi-people-fill me-1"></i> Utilisateurs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/credit">
-                        <i class="bi bi-cash-stack me-1"></i> Demande credit
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="dropdown d-flex align-items-center">
-            <a class="btn btn-sm btn-light border dropdown-toggle text-success fw-bold"
-               href="#" role="button" id="dropdownSessionMenu" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle me-1"></i> <b><%= connectedUser.getRole() %></b> : <i><%= connectedUser.getFirstName() + " " + connectedUser.getLastName() %></i>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownSessionMenu">
-                <!--<li><span class="dropdown-item-text text-muted small">Session ouverte</span></li>-->
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <a class="dropdown-item text-primary Profile-btn fw-bold" href="<%= ctx %>/profile">
-                        <i class="bi bi-person-circle me-1"></i> <b>Votre Profile</b>
-                    </a>
-                    <a class="dropdown-item text-danger logout-btn fw-bold" href="<%= ctx %>/logout">
-                        <i class="bi bi-box-arrow-right me-1"></i> <b>Déconnexion</b>
-                    </a>
-
-                </li>
-            </ul>
-        </div>
-    
+<!-- ✅ SIDEBAR -->
+<div class="sidebar d-flex flex-column">
+    <div class="mb-4 text-center">
+        <img src="<%= ctx %>/assets/img/logoBank.png" width="40" class="mb-2" alt="Logo">
+        <div class="logo"><%= appName %> <span class="admin-badge">ADMIN</span></div>
     </div>
-</nav>
-
-
-
-
-
-<!-- ✅ CONTENU PRINCIPAL -->
-<div class="container-main-dark main-card mt-5 mb-5">
-    <div class="card-body text-center">
-        <h5 class="mt-4 mb-4">
-            Bienvenue à votre compte <span class="text-primary font-weight-bold"><%= appName %></span>
-        </h5>
-        
-        <div class="mb-4">
-            <p class="text-primary h5 mb-3">
-                Solde principal :
-            </p>
-            <div class="text-danger balance-amount">
-                <%= String.format("%,.2f", result.getValue()) %><span class="currency"><%= result.getDevise() %></span>
-            </div>
-            <p class="text-muted small mt-2">Dernière mise à jour: <%= result.getCreationDate() %></p>
+    <nav class="nav flex-column">
+        <a class="nav-link active" href="<%= ctx %>/home">
+            <i class="bi bi-house-door me-2"></i> Accueil
+        </a>
+        <a class="nav-link" href="<%= ctx %>/users">
+            <i class="bi bi-people-fill me-2"></i> Utilisateurs
+        </a>
+        <a class="nav-link" href="<%= ctx %>/credit">
+            <i class="bi bi-cash-stack me-2"></i> Demande Crédit
+        </a>
+        <hr class="border-secondary">
+        <div class="dropdown">
+            <a class="nav-link dropdown-toggle text-success" href="#" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle me-2"></i>
+                <%= connectedUser.getRole() %>: <%= connectedUser.getFirstName() %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+                <li><a class="dropdown-item" href="<%= ctx %>/profile"><i class="bi bi-person me-2"></i>Votre Profil</a></li>
+                <li><a class="dropdown-item text-danger" href="<%= ctx %>/logout"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
+            </ul>
         </div>
-        
-        <% if (allCurrencies != null && allCurrencies.size() > 1) { %>
-            <div class="mt-4">
-                <p class="text-primary h6 mb-3">Tous vos comptes :</p>
-                
-                <div class="currency-list">
-                    <% for (MoneyData currency : allCurrencies) { %>
-                        <div class="currency-card text-start">
-                            <div class="d-flex align-items-center">
-                                <% 
-                                String icon = "bi-cash-coin";
-                                if (currency.getDevise().name().equals("Dollar")) {
-                                    icon = "bi-currency-dollar";
-                                } else if (currency.getDevise().name().equals("Euro")) {
-                                    icon = "bi-currency-euro";
-                                } else if (currency.getDevise().name().equals("Pound")) {
-                                    icon = "bi-currency-pound";
-                                }
-                                %>
-                                <i class="bi <%= icon %> currency-icon text-primary"></i>
-                                <div>
-                                    <h6 class="mb-0"><%= currency.getDevise() %></h6>
-                                    <p class="mb-0"><strong><%= String.format("%,.2f", currency.getValue()) %></strong></p>
-                                </div>
-                            </div>
-                        </div>
-                    <% } %>
-                </div>
+    </nav>
+</div>
+
+<!-- ✅ MAIN CONTENT -->
+<div class="main-content">
+    <div class="main-card">
+        <h4 class="mb-4 text-center">Bienvenue à votre compte <span class="text-primary"><%= appName %></span></h4>
+
+        <div class="mb-4 text-center">
+            <h5 class="text-primary">Solde principal :</h5>
+            <div class="text-danger display-6 fw-bold">
+                <%= String.format("%,.2f", result.getValue()) %> <span class="currency"><%= result.getDevise() %></span>
             </div>
+            <p class="text-muted small mt-2">Dernière mise à jour : <%= result.getCreationDate() %></p>
+        </div>
+
+        <% if (allCurrencies != null && allCurrencies.size() > 1) { %>
+        <h6 class="text-primary mt-5 mb-3">Tous vos comptes :</h6>
+        <% for (MoneyData currency : allCurrencies) {
+            String icon = "bi-cash-coin";
+            if (currency.getDevise().name().equals("Dollar")) {
+                icon = "bi-currency-dollar";
+            } else if (currency.getDevise().name().equals("Euro")) {
+                icon = "bi-currency-euro";
+            } else if (currency.getDevise().name().equals("Pound")) {
+                icon = "bi-currency-pound";
+            }
+        %>
+        <div class="currency-card d-flex align-items-center">
+            <i class="bi <%= icon %> currency-icon text-primary"></i>
+            <div>
+                <h6 class="mb-1"><%= currency.getDevise() %></h6>
+                <p class="mb-0 fw-semibold"><%= String.format("%,.2f", currency.getValue()) %></p>
+            </div>
+        </div>
+        <% } %>
         <% } %>
     </div>
 </div>
 
-<!-- ✅ FOOTER FIXÉ EN BAS -->
-<nav class="navbar footer-navbar fixed-bottom shadow-sm">
-    <div class="container d-flex justify-content-between align-items-center w-100">
-        <span class="text-muted small"><b class="blue"><i class="bi bi-house-door me-1"></i> <%= appName %> 2025 </b>– © Tous droits réservés</span>
-    </div>
-</nav>
+<!-- ✅ FOOTER -->
+<footer>
+    <span class="text-muted">
+        <i class="bi bi-house-door me-1"></i> <b class="text-primary"><%= appName %></b> – © 2025 Tous droits réservés
+    </span>
+</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

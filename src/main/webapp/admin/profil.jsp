@@ -4,28 +4,66 @@
 <%
     var ctx = request.getContextPath();
     var connectedUser = (ma.bankati.model.users.User) session.getAttribute("connectedUser");
+    var appName = (String) application.getAttribute("AppName");
 %>
 
-<html>
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <title>Mon Profile</title>
+    <meta charset="UTF-8">
+    <title>Mon Profil - <%= appName %></title>
     <link rel="stylesheet" href="<%= ctx %>/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%= ctx %>/assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="<%= ctx %>/assets/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         body {
             min-height: 100vh;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #232526 0%, #414345 100%);
-            font-family: 'Poppins', Arial, sans-serif;
+            color: #fff;
+        }
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #181a1b;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 2rem 1rem;
+        }
+        .sidebar .nav-link {
+            color: #fff;
+            margin: 0.5rem 0;
+            font-weight: 500;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #242627;
+            border-radius: 0.5rem;
+            color: #4fc3f7 !important;
+        }
+        .sidebar .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #4fc3f7;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+        }
+        .main-card {
+            background: #181a1b;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         .profile-card {
-            border-radius: 2rem;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            border-radius: 1.5rem;
             background: #181a1b;
-            padding: 2.5rem 2rem 2rem 2rem;
+            padding: 2rem;
             color: #fff;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         .profile-icon {
             font-size: 1.5rem;
@@ -40,31 +78,12 @@
         .info-row:last-child {
             border-bottom: none;
         }
-        .navbar, .footer-navbar {
-            font-family: 'Poppins', Arial, sans-serif;
-            background: #181a1b !important;
-        }
-        .navbar-brand strong {
-            color: #4fc3f7 !important;
-            font-family: 'Poppins', Arial, sans-serif;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-        .nav-link, .dropdown-item, .navbar-brand, .navbar {
-            color: #fff !important;
-        }
-        .nav-link.text-primary, .dropdown-item.text-primary {
-            color: #4fc3f7 !important;
-        }
-        .nav-link.text-danger, .dropdown-item.text-danger {
-            color: #ff5252 !important;
-        }
-        .nav-link.text-success, .dropdown-toggle.text-success {
-            color: #43a047 !important;
-        }
-        .container {
-            background: #181a1b !important;
-            color: #fff;
+        .form-card {
+            background: #212529;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid #4fc3f7;
         }
         .input-group-text {
             background: #232526 !important;
@@ -85,14 +104,15 @@
         .badge.bg-success {
             background-color: #43a047 !important;
         }
-        .blue {
+        .text-primary {
             color: #4fc3f7 !important;
         }
-        .footer-navbar {
-            background: #181a1b !important;
-        }
-        .footer-navbar .text-muted, .footer-navbar .blue {
-            color: #4fc3f7 !important;
+        .alert-wrapper {
+            position: fixed;
+            top: 20px;
+            left: 250px;
+            width: calc(100% - 270px);
+            z-index: 1000;
         }
         .alert-success {
             background-color: rgba(67, 160, 71, 0.9) !important;
@@ -108,200 +128,211 @@
         .invalid-feedback {
             color: #ff5252 !important;
         }
+        .btn-outline-success {
+            border-color: #43a047;
+            color: #43a047;
+        }
+        .btn-outline-success:hover {
+            background-color: #43a047;
+            color: #fff;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            background-color: #181a1b;
+            text-align: center;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .admin-badge {
+            background-color: #4fc3f7;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            margin-left: 0.5rem;
+            font-weight: bold;
+            letter-spacing: 0.05rem;
+        }
     </style>
 </head>
-<body class="Optima bgBlue">
+<body>
 
-<!-- NAVBAR (same as your users page) -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-    <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="<%= ctx %>/home">
-            <img src="<%= ctx %>/assets/img/logoBank.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2">
-            <strong class="blue ml-1"><%=application.getAttribute("AppName")%></strong>
-        </a>
-
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/home">
-                        <i class="bi bi-house-door me-1"></i> Accueil
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/users">
-                        <i class="bi bi-people-fill me-1"></i> Utilisateurs
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-primary fw-bold" href="<%= ctx %>/credit">
-                        <i class="bi bi-cash-stack me-1"></i> Demande credit
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="dropdown d-flex align-items-center">
-            <a class="btn btn-sm btn-light border dropdown-toggle text-success fw-bold"
-               href="#" role="button" id="dropdownSessionMenu" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-person-circle me-1"></i> <b><%= connectedUser.getRole() %></b> : <i><%= connectedUser.getFirstName() + " " + connectedUser.getLastName() %></i>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownSessionMenu">
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <a class="dropdown-item text-primary Profile-btn fw-bold" href="<%= ctx %>/profile">
-                        <i class="bi bi-person-circle me-1"></i> <b>Votre Profile</b>
-                    </a>
-                    <a class="dropdown-item text-danger logout-btn fw-bold" href="<%= ctx %>/logout">
-                        <i class="bi bi-box-arrow-right me-1"></i> <b>Déconnexion</b>
-                    </a>
-                </li>
-            </ul>
-        </div>
+<!-- ✅ SIDEBAR -->
+<div class="sidebar d-flex flex-column">
+    <div class="mb-4 text-center">
+        <img src="<%= ctx %>/assets/img/logoBank.png" width="40" class="mb-2" alt="Logo">
+        <div class="logo"><%= appName %> <span class="admin-badge">ADMIN</span></div>
     </div>
-</nav>
+    <nav class="nav flex-column">
+        <a class="nav-link" href="<%= ctx %>/home">
+            <i class="bi bi-house-door me-2"></i> Accueil
+        </a>
+        <a class="nav-link" href="<%= ctx %>/users">
+            <i class="bi bi-people-fill me-2"></i> Utilisateurs
+        </a>
+        <a class="nav-link" href="<%= ctx %>/credit">
+            <i class="bi bi-cash-stack me-2"></i> Demande Crédit
+        </a>
+        <hr class="border-secondary">
+        <div class="dropdown">
+            <a class="nav-link dropdown-toggle text-success" href="#" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle me-2"></i>
+                <%= connectedUser.getRole() %>: <%= connectedUser.getFirstName() %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+                <li><a class="dropdown-item active" href="<%= ctx %>/profile"><i class="bi bi-person me-2"></i>Votre Profil</a></li>
+                <li><a class="dropdown-item text-danger" href="<%= ctx %>/logout"><i class="bi bi-box-arrow-right me-2"></i>Déconnexion</a></li>
+            </ul>
+        </div>
+    </nav>
+</div>
 
 <!-- ALERT MESSAGES -->
-<c:if test="${not empty successMessage}">
-    <div class="container w-75 mt-3">
+<div class="alert-wrapper">
+    <c:if test="${not empty successMessage}">
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i> ${successMessage}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    </div>
-</c:if>
-<c:if test="${not empty errorMessage}">
-    <div class="container w-75 mt-3">
+    </c:if>
+    <c:if test="${not empty errorMessage}">
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i> ${errorMessage}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    </div>
-</c:if>
+    </c:if>
+</div>
 
 <!-- MAIN CONTENT -->
-<div class="container w-75 mt-5 mb-5 bg-white p-4 rounded-3 shadow-sm border border-light">
-    <h4 class="text-center text-primary mb-4">Mon Profile</h4>
+<div class="main-content">
+    <div class="main-card">
+        <h4 class="text-center text-primary mb-4">Mon Profil</h4>
 
-    <!-- PROFILE CARD -->
-    <div class="profile-card p-4 mb-5">
-        <!-- Profile Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h5 class="blue mb-0">Informations Personnelles</h5>
-            </div>
-        </div>
-
-        <!-- Profile Information -->
-        <div class="row info-row">
-            <div class="col-md-3 d-flex align-items-center">
-                <i class="bi bi-person-badge profile-icon"></i>
-                <strong>Prénom:</strong>
-            </div>
-            <div class="col-md-9">
-                <%= connectedUser.getFirstName() %>
-            </div>
-        </div>
-
-        <div class="row info-row">
-            <div class="col-md-3 d-flex align-items-center">
-                <i class="bi bi-person profile-icon"></i>
-                <strong>Nom:</strong>
-            </div>
-            <div class="col-md-9">
-                <%= connectedUser.getLastName() %>
-            </div>
-        </div>
-
-        <div class="row info-row">
-            <div class="col-md-3 d-flex align-items-center">
-                <i class="bi bi-person-circle profile-icon"></i>
-                <strong>Nom d'utilisateur:</strong>
-            </div>
-            <div class="col-md-9">
-                <%= connectedUser.getUsername() %>
-            </div>
-        </div>
-
-        <div class="row info-row">
-            <div class="col-md-3 d-flex align-items-center">
-                <i class="bi bi-shield-lock profile-icon"></i>
-                <strong>Rôle:</strong>
-            </div>
-            <div class="col-md-9">
-                <span class="badge bg-<%= connectedUser.getRole() == ERole.ADMIN ? "primary" : "success" %>">
-                    <%= connectedUser.getRole() %>
-                </span>
-            </div>
-        </div>
-
-        <div class="row info-row">
-            <div class="col-md-3 d-flex align-items-center">
-                <i class="bi bi-calendar-check profile-icon"></i>
-                <strong>Date de création:</strong>
-            </div>
-            <div class="col-md-9">
-                <%= connectedUser.getCreationDate() != null ?
-                        connectedUser.getCreationDate().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) :
-                        "N/A" %>
-            </div>
-        </div>
-    </div>
-
-    <!-- PASSWORD CHANGE SECTION -->
-    <div class="border border-primary rounded-4 p-4 mt-5 mb-5 shadow-sm">
-        <h5 class="text-center bold blue mb-4">Changer le mot de passe</h5>
-
-        <form id="passwordForm" action="<%= ctx %>/profile/change-password" method="post" class="mt-3" onsubmit="return validatePasswordForm()">
-            <!-- Current Password -->
-            <div class="mb-3">
-                <div class="input-group align-items-center">
-                    <span class="input-group-text">
-                        <i class="bi bi-lock-fill text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
-                    </span>
-                    <input type="password" class="form-control bold" id="currentPassword" name="currentPassword" placeholder="Mot de passe actuel" required/>
-                    <div class="invalid-feedback">Le mot de passe actuel est requis</div>
+        <!-- PROFILE CARD -->
+        <div class="profile-card mb-4">
+            <!-- Profile Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h5 class="text-primary mb-0">Informations Personnelles</h5>
                 </div>
             </div>
 
-            <!-- New Password -->
-            <div class="mb-3">
-                <div class="input-group align-items-center">
-                    <span class="input-group-text">
-                        <i class="bi bi-key-fill text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
-                    </span>
-                    <input type="password" class="form-control bold" id="newPassword" name="newPassword" placeholder="Nouveau mot de passe" required/>
-                    <div class="invalid-feedback">Le nouveau mot de passe est requis</div>
+            <!-- Profile Information -->
+            <div class="row info-row">
+                <div class="col-md-3 d-flex align-items-center">
+                    <i class="bi bi-person-badge profile-icon"></i>
+                    <strong>Prénom:</strong>
+                </div>
+                <div class="col-md-9">
+                    <%= connectedUser.getFirstName() %>
                 </div>
             </div>
 
-            <!-- Confirm New Password -->
-            <div class="mb-4">
-                <div class="input-group align-items-center">
-                    <span class="input-group-text">
-                        <i class="bi bi-key text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
-                    </span>
-                    <input type="password" class="form-control bold" id="confirmPassword" name="confirmPassword" placeholder="Confirmer le nouveau mot de passe" required/>
-                    <div class="invalid-feedback">Les mots de passe ne correspondent pas</div>
+            <div class="row info-row">
+                <div class="col-md-3 d-flex align-items-center">
+                    <i class="bi bi-person profile-icon"></i>
+                    <strong>Nom:</strong>
+                </div>
+                <div class="col-md-9">
+                    <%= connectedUser.getLastName() %>
                 </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class="text-center">
-                <button type="submit" class="btn btn-outline-success font-weight-bold">
-                    <i class="bi bi-save me-1"></i> Enregistrer les modifications
-                </button>
+            <div class="row info-row">
+                <div class="col-md-3 d-flex align-items-center">
+                    <i class="bi bi-person-circle profile-icon"></i>
+                    <strong>Nom d'utilisateur:</strong>
+                </div>
+                <div class="col-md-9">
+                    <%= connectedUser.getUsername() %>
+                </div>
             </div>
-        </form>
+
+            <div class="row info-row">
+                <div class="col-md-3 d-flex align-items-center">
+                    <i class="bi bi-shield-lock profile-icon"></i>
+                    <strong>Rôle:</strong>
+                </div>
+                <div class="col-md-9">
+                    <span class="badge bg-<%= connectedUser.getRole() == ERole.ADMIN ? "primary" : "success" %>">
+                        <%= connectedUser.getRole() %>
+                    </span>
+                </div>
+            </div>
+
+            <div class="row info-row">
+                <div class="col-md-3 d-flex align-items-center">
+                    <i class="bi bi-calendar-check profile-icon"></i>
+                    <strong>Date de création:</strong>
+                </div>
+                <div class="col-md-9">
+                    <%= connectedUser.getCreationDate() != null ?
+                            connectedUser.getCreationDate().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) :
+                            "N/A" %>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASSWORD CHANGE SECTION -->
+        <div class="form-card">
+            <h5 class="text-center text-primary mb-4">Changer le mot de passe</h5>
+
+            <form id="passwordForm" action="<%= ctx %>/profile/change-password" method="post" class="mt-3" onsubmit="return validatePasswordForm()">
+                <!-- Current Password -->
+                <div class="mb-3">
+                    <div class="input-group align-items-center">
+                        <span class="input-group-text">
+                            <i class="bi bi-lock-fill text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
+                        </span>
+                        <input type="password" class="form-control bold" id="currentPassword" name="currentPassword" placeholder="Mot de passe actuel" required/>
+                        <div class="invalid-feedback">Le mot de passe actuel est requis</div>
+                    </div>
+                </div>
+
+                <!-- New Password -->
+                <div class="mb-3">
+                    <div class="input-group align-items-center">
+                        <span class="input-group-text">
+                            <i class="bi bi-key-fill text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
+                        </span>
+                        <input type="password" class="form-control bold" id="newPassword" name="newPassword" placeholder="Nouveau mot de passe" required/>
+                        <div class="invalid-feedback">Le nouveau mot de passe est requis</div>
+                    </div>
+                </div>
+
+                <!-- Confirm New Password -->
+                <div class="mb-4">
+                    <div class="input-group align-items-center">
+                        <span class="input-group-text">
+                            <i class="bi bi-key text-primary" style="font-size: 1.2rem; margin-right: 6px;"></i>
+                        </span>
+                        <input type="password" class="form-control bold" id="confirmPassword" name="confirmPassword" placeholder="Confirmer le nouveau mot de passe" required/>
+                        <div class="invalid-feedback">Les mots de passe ne correspondent pas</div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-outline-success font-weight-bold">
+                        <i class="bi bi-save me-1"></i> Enregistrer les modifications
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<!-- FOOTER (same as your users page) -->
-<nav class="navbar footer-navbar fixed-bottom shadow-sm">
-    <div class="container d-flex justify-content-between align-items-center w-100">
-        <span class="text-muted small"><b class="blue"><i class="bi bi-house-door me-1"></i> Akram's Bank 2025 </b>– © Tous droits réservés</span>
-    </div>
-</nav>
+<!-- FOOTER -->
+<footer>
+    <span class="text-muted">
+        <i class="bi bi-house-door me-1"></i> <b class="text-primary"><%= appName %></b> – © 2025 Tous droits réservés
+    </span>
+</footer>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Form validation for password change
     function validatePasswordForm() {

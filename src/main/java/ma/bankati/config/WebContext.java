@@ -25,7 +25,7 @@ public class WebContext implements ServletContextListener {
             try {
                 properties.load(configFile);
                 
-                // Print database connection information (for debug)
+                // Print database connection information
                 System.out.println("Database URL: " + properties.getProperty("datasource.url"));
                 System.out.println("Database Driver: " + properties.getProperty("datasource.driver"));
 
